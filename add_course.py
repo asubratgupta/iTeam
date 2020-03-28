@@ -22,7 +22,7 @@ def add_course(full_name, email_id, contact_number, course_url, language):
 
     def url_cleaner(course_url):
         ignore_char = ['https', 'www', '.in', 'http', '.com', ':', '//']  # Replaced with Nothing
-        unwanted_char = ['/', '?', '.', '=']  # Replaced with Single Space
+        unwanted_char = ['/', '?', '.', '=', '-']  # Replaced with Single Space
         clean_url = course_url
         for char in ignore_char:
             clean_url = clean_url.replace(char, '')

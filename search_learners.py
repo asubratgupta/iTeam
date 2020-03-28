@@ -13,7 +13,7 @@ db = firestore.client()
 
 def url_cleaner(course_url):
     ignore_char = ['https', 'www', '.in', 'http', '.com', ':', '//']  # Replaced with Nothing
-    unwanted_char = ['/', '?', '.', '=']  # Replaced with Single Space
+    unwanted_char = ['/', '?', '.', '=', '-']  # Replaced with Single Space
     clean_url = course_url
     for char in ignore_char:
         clean_url = clean_url.replace(char, '')
@@ -21,7 +21,10 @@ def url_cleaner(course_url):
         clean_url = clean_url.replace(char, ' ')
     return clean_url
 
+
 learners_details = list()
+
+
 def find_learners(course_url, language):
     global learners_details
 
@@ -40,6 +43,7 @@ def find_learners(course_url, language):
         doc = doc_ref.get()
         learners_details.append(doc.to_dict())
 
+
 root = tk.Tk()
 
 root.wm_title('Search Learners by URL')
@@ -54,29 +58,37 @@ e1.grid(row=0, column=1)
 tkvar = tk.StringVar(root)
 
 # Dictionary with options
-choices = ['Hindi','English']
-tkvar.set('English') # set the default option
+choices = ['Hindi', 'English']
+tkvar.set('English')  # set the default option
 
 popupMenu = tk.OptionMenu(root, tkvar, *choices)
-tk.Label(root, text="Preferred Language").grid(row = 1, column = 0)
-popupMenu.grid(row = 1, column =1)
+tk.Label(root, text="Preferred Language").grid(row=1, column=0)
+popupMenu.grid(row=1, column=1)
+
 
 def change_dropdown(*args):
-   return tkvar.get()
+    return tkvar.get()
+
 
 # link function to change dropdown
 tkvar.trace('w', change_dropdown)
 
 course_url, language = '', ''
+
+
 def update(*args):
-   global course_url, language
-   course_url, language = e1.get(), change_dropdown()
-   find_learners(course_url, language)
-   results = 'Full Name\t\tContact Number\t\tEmail ID\t\tLanguage'
-   for learner in learners_details:
-       results = results + '\n' + learner['full_name'] + '\t' + learner['contact_number'] + '\t' + learner[
-           'email_id'] + '\t' + learner['language']
-   tk.Label(root, text=results).grid(row=5)
+    global course_url, language, learners_details
+    learners_details = list()
+    print('clicked')
+    course_url, language = e1.get(), change_dropdown()
+    find_learners(course_url, language)
+    results = 'Full Name\t\tContact Number\t\tEmail ID\t\tLanguage'
+    for learner in learners_details:
+        results = results + '\n' + learner['full_name'] + '\t' + learner['contact_number'] + '\t' + learner[
+            'email_id'] + '\t' + learner['language']
+    print(results)
+    tk.Label(root, text=results).grid(row=5)
+
 
 button = tk.Button(root, text='Find Learners', width=25, command=update)
 button.grid(row=2, column=1)
