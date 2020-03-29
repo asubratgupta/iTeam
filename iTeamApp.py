@@ -6,6 +6,7 @@ except:
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+import webbrowser
 
 import tkinter as tk
 # from PyQt5 import QtGui    # or PySide
@@ -29,13 +30,18 @@ def center(toplevel):
     toplevel.geometry("+%d+%d" % (x, y))
     # toplevel.title("Centered!")
 
+def open_url(url):
+    webbrowser.open(url, new=2)
+
 cred = credentials.Certificate('iteam-3b0d1-firebase-adminsdk-o179z-d503c5a2a9.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-LARGE_FONT= ("Verdana", 13)
+LARGE_FONT= ("Verdana", 14)
 NORM_FONT = ("Helvetica", 10)
 SMALL_FONT = ("Helvetica", 8)
+
+clicked_url = ''
 
 def popupmsg(msg):
     popup = tk.Tk()
@@ -217,14 +223,42 @@ class SearchLearners(tk.Frame):
                 learners_details.append(doc.to_dict())
 
         root = self
+        # Create a Tkinter variable
+        tkvar = tk.StringVar(root)
+
+        def change_dropdown(*args):
+            return tkvar.get()
+
+        def update(*args):
+            global course_url, language, learners_details
+            learners_details = list()
+            # print('clicked')
+            course_url, language = e1.get(), change_dropdown()
+            find_learners(course_url, language)
+            results = ''
+            tk.Label(root, text='Search Results').grid(row=4, padx=10)
+            tk.Label(root, text='Full Name', font=LARGE_FONT, bg='#90CAF9', fg='#263238').grid(row=5, column=0, padx=5, pady=5)
+            tk.Label(root, text='Contact Number', font=LARGE_FONT, bg='#90CAF9', fg='#263238').grid(row=5, column=1, padx=5, pady=5)
+            tk.Label(root, text='Email ID', font=LARGE_FONT, bg='#90CAF9', fg='#263238').grid(row=5, column=2, padx=5, pady=5)
+            tk.Label(root, text='Language', font=LARGE_FONT, bg='#90CAF9', fg='#263238').grid(row=5, column=3, padx=5, pady=5)
+            for idx, learner in enumerate(learners_details):
+                # results = results + '\n' + learner['full_name'] + '\t' + learner['contact_number'] + '\t' + learner['email_id'] + '\t' + learner['language']
+                # print(results)
+                # tk.Label(root, text=learner['full_name'].ljust(10)  + '\t\t' + learner['contact_number'].ljust(10)  + '\t\t' + learner[
+                #     'email_id'].ljust(10) + '\t\t' + learner['language'].ljust(10) ).grid(row=6+idx, padx=5, pady=5)
+                tk.Label(root, text=learner['full_name'], bg='#90CAF9', fg='#1A237E').grid(row=6+idx, column=0, padx=5, pady=5)
+                tk.Label(root, text=learner['contact_number'], bg='#90CAF9', fg='#1A237E').grid(row=6+idx, column=1, padx=5, pady=5)
+                tk.Label(root, text=learner['email_id'], bg='#90CAF9', fg='#1A237E').grid(row=6+idx, column=2, padx=5, pady=5)
+                tk.Label(root, text=learner['language'], bg='#90CAF9', fg='#1A237E').grid(row=6+idx, column=3, padx=5, pady=5)
 
         tk.Label(root, text='Course URL', font=LARGE_FONT, bg='#90CAF9',  padx=25, pady=10).grid(row=0)
-        e1 = tk.Entry(root)
+        v = tk.StringVar(root, value=clicked_url)
+        e1 = tk.Entry(root, textvariable=v)
+        if len(clicked_url)>0:
+            update()
         e1.grid(row=0, column=1)
 
         # Location Drop Down
-        # Create a Tkinter variable
-        tkvar = tk.StringVar(root)
 
         # Dictionary with options
         choices = ['Hindi', 'English']
@@ -234,34 +268,16 @@ class SearchLearners(tk.Frame):
         tk.Label(root, text="Preferred Language", font=LARGE_FONT, bg='#90CAF9',  padx=25, pady=10).grid(row=1, column=0)
         popupMenu.grid(row=1, column=1)
 
-        def change_dropdown(*args):
-            return tkvar.get()
-
         # link function to change dropdown
         tkvar.trace('w', change_dropdown)
 
         course_url, language = '', ''
 
-        def update(*args):
-            global course_url, language, learners_details
-            learners_details = list()
-            # print('clicked')
-            course_url, language = e1.get(), change_dropdown()
-            find_learners(course_url, language)
-            results = 'Full Name\t\tContact Number\t\tEmail ID\t\tLanguage'
-            for learner in learners_details:
-                results = results + '\n' + learner['full_name'] + '\t' + learner['contact_number'] + '\t' + learner[
-                    'email_id'] + '\t' + learner['language']
-            # print(results)
-            tk.Label(root, text=results).grid(row=5, padx=25, pady=10)
-
         button = tk.Button(root, text='Find Learners', font=("Arial", 20), width=15, command=update)
         button.grid(row=2, column=1, padx=30, pady=10)
 
-        tk.Label(root, text='Search Results').grid(row=3)
-
         button = tk.Button(root, text='Back to Main Menu', width=15, command=lambda: master.switch_frame(HomePage))
-        button.grid(row=4, column=1, padx=30, pady=10)
+        button.grid(row=3, column=1, padx=30, pady=10)
 
 
 class SearchCourse(tk.Frame):
@@ -299,10 +315,20 @@ class SearchCourse(tk.Frame):
             tags = url_cleaner(e1.get())
             tags_list = tags.split(' ')
             courses = find_courses(tags_list)
-            results = 'URLs\n'
-            for course in courses:
-                results = results + '\n' + course
-            tk.Label(root, text=results).grid(row=5, padx=25, pady=10)
+            # tk.Label(root, text='URLs').grid(row=5, padx=25, pady=10)
+            results=''
+            for idx, course in enumerate(courses):
+                # results = results + '\n' + course
+                # tk.Label(root, text=str(idx+1)+'.').grid(row=6+idx, column='0')
+                label = tk.Label(root, text='  '+str(idx+1)+'.\t'+course[:60]+'... ', width=55, anchor='w')
+                label.grid(row=6+idx, column='0')
+                label.bind("<Button-1>", lambda e, url=course: open_url(url))
+                def click_helper(url):
+                    global clicked_url
+                    clicked_url = url
+                    master.switch_frame(SearchLearners)
+                button = tk.Button(root, text='View Learners', width=15,command=lambda: click_helper(course))
+                button.grid(row=6+idx, column=1, padx=30, pady=10)
 
         button = tk.Button(root, text='Search Course', font=("Arial", 20), width=15, command=search_course)
         button.grid(row=2, column=1, padx=30, pady=10)
