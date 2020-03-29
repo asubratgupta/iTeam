@@ -33,7 +33,7 @@ cred = credentials.Certificate('iteam-3b0d1-firebase-adminsdk-o179z-d503c5a2a9.j
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-LARGE_FONT= ("Verdana", 12)
+LARGE_FONT= ("Verdana", 13)
 NORM_FONT = ("Helvetica", 10)
 SMALL_FONT = ("Helvetica", 8)
 
@@ -67,27 +67,28 @@ class HomePage(tk.Frame):
         tk.Frame.__init__(self, master)
         # tk.Label(self, text="Start page", font=('Helvetica', 18, "bold")).pack(side="top", fill="x", pady=5)
         root = self
-        tk.Label(root, text='\nThis allow you to list your course\n(which allowes to be discovered by other learners)').grid(row=0)
-        button = tk.Button(root, text='Add Course', width=25, command=lambda: master.switch_frame(AddCourse))
+        root.configure(bg='#90CAF9')
+        tk.Label(root, text='\n\nRegister, what are you learning.)', font=LARGE_FONT, bg='#90CAF9',  padx=25, pady=10).grid(row=0)
+        button = tk.Button(root, text='Add Course', font=("Arial", 20),  width=15, fg="red", command=lambda: master.switch_frame(AddCourse))
         button.grid(row=1)
 
         tk.Label(root,
-                 text='\nThis allow you to list your course\n(which allowes to be discovered by other learners)').grid(
+                 text='\n\nFind buddies pursuing the same course.', font=LARGE_FONT, bg='#90CAF9', padx=25, pady=10).grid(
             row=2)
-        button = tk.Button(root, text='Search Learners', width=25, command=lambda: master.switch_frame(SearchLearners))
+        button = tk.Button(root, text='Search Learners', font=("Arial", 20), width=15, fg="green", command=lambda: master.switch_frame(SearchLearners))
         button.grid(row=3)
 
         tk.Label(root,
-                 text='\nThis allow you to list your course\n(which allowes to be discovered by other learners)').grid(
+                 text='\n\nDiscover courses using TAGs', font=LARGE_FONT, bg='#90CAF9', anchor='center',  padx=25, pady=10).grid(
             row=4)
-        button = tk.Button(root, text='Search Course', width=25, command=lambda: master.switch_frame(SearchCourse))
+        button = tk.Button(root, text='Search Course', font=("Arial", 20), width=15, fg="blue", command=lambda: master.switch_frame(SearchCourse))
         button.grid(row=5)
 
 
 class AddCourse(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        tk.Frame.configure(self, bg='blue')
+        tk.Frame.configure(self, bg='#90CAF9')
 
         def add_course(full_name, email_id, contact_number, course_url, language):
             # Use a service account
@@ -131,10 +132,10 @@ class AddCourse(tk.Frame):
 
         root = self
 
-        tk.Label(root, text='Full Name').grid(row=0)
-        tk.Label(root, text='Email').grid(row=1)
-        tk.Label(root, text='Contact No.').grid(row=2)
-        tk.Label(root, text='Course URL').grid(row=3)
+        tk.Label(root, text='Full Name', font=LARGE_FONT, bg='#90CAF9',  padx=25, pady=10).grid(row=0)
+        tk.Label(root, text='Email', font=LARGE_FONT, bg='#90CAF9',  padx=25, pady=10).grid(row=1)
+        tk.Label(root, text='Contact No.', font=LARGE_FONT, bg='#90CAF9',  padx=25, pady=10).grid(row=2)
+        tk.Label(root, text='Course URL', font=LARGE_FONT, bg='#90CAF9',  padx=25, pady=10).grid(row=3)
         e1 = tk.Entry(root)
         e2 = tk.Entry(root)
         e3 = tk.Entry(root)
@@ -153,7 +154,7 @@ class AddCourse(tk.Frame):
         tkvar.set('English')  # set the default option
 
         popupMenu = tk.OptionMenu(root, tkvar, *choices)
-        tk.Label(root, text="Preferred Language").grid(row=4, column=0)
+        tk.Label(root, text="Preferred Language", font=LARGE_FONT, bg='#90CAF9',  padx=25, pady=10).grid(row=4, column=0)
         popupMenu.grid(row=4, column=1)
 
         def change_dropdown(*args):
@@ -173,17 +174,17 @@ class AddCourse(tk.Frame):
             else:
                 popupmsg('All details are mandatory. Try Again!')
 
-        button = tk.Button(root, text='Submit', width=25, command=update)
-        button.grid(row=7, column=1)
+        button = tk.Button(root, text='Submit', font=("Arial", 20), width=15, command=update)
+        button.grid(row=7, column=1, padx=30, pady=10)
 
-        button = tk.Button(root, text='Back to Main Menu', width=25, command=lambda: master.switch_frame(HomePage))
-        button.grid(row=8, column=1)
+        button = tk.Button(root, text='Back to Main Menu', width=15, command=lambda: master.switch_frame(HomePage))
+        button.grid(row=8, column=1, padx=30, pady=10)
 
 
 class SearchLearners(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        tk.Frame.configure(self, bg='red')
+        tk.Frame.configure(self, bg='#90CAF9')
 
         def url_cleaner(course_url):
             ignore_char = ['https', 'www', '.in', 'http', '.com', ':', '//']  # Replaced with Nothing
@@ -217,7 +218,7 @@ class SearchLearners(tk.Frame):
 
         root = self
 
-        tk.Label(root, text='Course URL').grid(row=0)
+        tk.Label(root, text='Course URL', font=LARGE_FONT, bg='#90CAF9',  padx=25, pady=10).grid(row=0)
         e1 = tk.Entry(root)
         e1.grid(row=0, column=1)
 
@@ -230,7 +231,7 @@ class SearchLearners(tk.Frame):
         tkvar.set('English')  # set the default option
 
         popupMenu = tk.OptionMenu(root, tkvar, *choices)
-        tk.Label(root, text="Preferred Language").grid(row=1, column=0)
+        tk.Label(root, text="Preferred Language", font=LARGE_FONT, bg='#90CAF9',  padx=25, pady=10).grid(row=1, column=0)
         popupMenu.grid(row=1, column=1)
 
         def change_dropdown(*args):
@@ -252,23 +253,21 @@ class SearchLearners(tk.Frame):
                 results = results + '\n' + learner['full_name'] + '\t' + learner['contact_number'] + '\t' + learner[
                     'email_id'] + '\t' + learner['language']
             # print(results)
-            tk.Label(root, text=results).grid(row=5)
+            tk.Label(root, text=results).grid(row=5, padx=25, pady=10)
 
-        button = tk.Button(root, text='Find Learners', width=25, command=update)
-        button.grid(row=2, column=1)
+        button = tk.Button(root, text='Find Learners', font=("Arial", 20), width=15, command=update)
+        button.grid(row=2, column=1, padx=30, pady=10)
 
-        tk.Label(root, text='').grid(row=3)
-        tk.Label(root, text='Search Results').grid(row=4)
-        tk.Label(root, text='').grid(row=5)
+        tk.Label(root, text='Search Results').grid(row=3)
 
-        button = tk.Button(root, text='Back to Main Menu', width=25, command=lambda: master.switch_frame(HomePage))
-        button.grid(row=6, column=1)
+        button = tk.Button(root, text='Back to Main Menu', width=15, command=lambda: master.switch_frame(HomePage))
+        button.grid(row=4, column=1, padx=30, pady=10)
 
 
 class SearchCourse(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        tk.Frame.configure(self, bg='red')
+        tk.Frame.configure(self, bg='#90CAF9')
 
         def url_cleaner(course_url):
             ignore_char = ['https', 'www', '.in', 'http', '.com', ':', '//']  # Replaced with Nothing
@@ -292,7 +291,7 @@ class SearchCourse(tk.Frame):
 
         root = self
 
-        tk.Label(root, text='Enter TAGs (Space Seprated)').grid(row=0)
+        tk.Label(root, text='Enter TAGs (Space Seprated)', font=LARGE_FONT, bg='#90CAF9',  padx=25, pady=10).grid(row=0)
         e1 = tk.Entry(root)
         e1.grid(row=0, column=1)
 
@@ -303,20 +302,21 @@ class SearchCourse(tk.Frame):
             results = 'URLs\n'
             for course in courses:
                 results = results + '\n' + course
-            tk.Label(root, text=results).grid(row=5)
+            tk.Label(root, text=results).grid(row=5, padx=25, pady=10)
 
-        button = tk.Button(root, text='Search Course', width=25, command=search_course)
-        button.grid(row=2, column=1)
+        button = tk.Button(root, text='Search Course', font=("Arial", 20), width=15, command=search_course)
+        button.grid(row=2, column=1, padx=30, pady=10)
 
-        tk.Label(root, text='').grid(row=3)
-        tk.Label(root, text='Search Results').grid(row=4)
-        tk.Label(root, text='').grid(row=5)
+        tk.Label(root, text='Search Results', font=LARGE_FONT, bg='#90CAF9',  padx=25, pady=10).grid(row=3)
 
-        button = tk.Button(root, text='Back to Main Menu', width=25, command=lambda: master.switch_frame(HomePage))
-        button.grid(row=6, column=1)
+        button = tk.Button(root, text='Back to Main Menu', width=15, command=lambda: master.switch_frame(HomePage))
+        button.grid(row=4, column=1, padx=30, pady=10)
 
 
 if __name__ == "__main__":
     app = SampleApp()
+    app.wm_title('iTeam')
+    app.minsize(300, 380)
+    app.configure(bg='#90CAF9')
     center(app)
     app.mainloop()
