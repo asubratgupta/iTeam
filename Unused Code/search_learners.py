@@ -1,13 +1,13 @@
 import tkinter as tk
-
+import Initialised
 import firebase_admin
-import google
 from firebase_admin import credentials
 from firebase_admin import firestore
 
 cred = credentials.Certificate('iteam-3b0d1-firebase-adminsdk-o179z-d503c5a2a9.json')
-firebase_admin.initialize_app(cred)
-
+if not Initialised.isInitialised():
+    firebase_admin.initialize_app(cred)
+    Initialised.setInitialised()
 db = firestore.client()
 
 
@@ -96,5 +96,13 @@ button.grid(row=2, column=1)
 tk.Label(root, text='').grid(row=3)
 tk.Label(root, text='Search Results').grid(row=4)
 tk.Label(root, text='').grid(row=5)
+
+
+def back():
+    root.destroy()
+
+
+button = tk.Button(root, text='Back to Main Menu', width=25, command=back)
+button.grid(row=6, column=1)
 
 root.mainloop()
