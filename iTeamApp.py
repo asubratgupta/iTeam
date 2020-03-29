@@ -1,15 +1,51 @@
+try:
+    import Tkinter as tk
+except:
+    import tkinter as tk
+
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+
+import tkinter as tk
+# from PyQt5 import QtGui    # or PySide
+
+def center(toplevel):
+    toplevel.update_idletasks()
+
+    # Tkinter way to find the screen resolution
+    screen_width = toplevel.winfo_screenwidth()
+    screen_height = toplevel.winfo_screenheight()
+
+    # # PyQt way to find the screen resolution
+    # app = QtGui.QApplication([])
+    # screen_width = app.desktop().screenGeometry().width()
+    # screen_height = app.desktop().screenGeometry().height()
+
+    size = tuple(int(_) for _ in toplevel.geometry().split('+')[0].split('x'))
+    x = screen_width/2 - size[0]/2
+    y = screen_height/2 - size[1]/2
+
+    toplevel.geometry("+%d+%d" % (x, y))
+    # toplevel.title("Centered!")
 
 cred = credentials.Certificate('iteam-3b0d1-firebase-adminsdk-o179z-d503c5a2a9.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-try:
-    import Tkinter as tk
-except:
-    import tkinter as tk
+LARGE_FONT= ("Verdana", 12)
+NORM_FONT = ("Helvetica", 10)
+SMALL_FONT = ("Helvetica", 8)
+
+def popupmsg(msg):
+    popup = tk.Tk()
+    popup.wm_title("Notification!")
+    label = tk.Label(popup, text=msg)
+    label.pack(side="top", fill="x", pady=10)
+    B1 = tk.Button(popup, text="Okay", command = popup.destroy)
+    B1.pack()
+    center(popup)
+    popup.mainloop()
 
 
 class SampleApp(tk.Tk):
@@ -46,10 +82,6 @@ class HomePage(tk.Frame):
             row=4)
         button = tk.Button(root, text='Search Course', width=25, command=lambda: master.switch_frame(SearchCourse))
         button.grid(row=5)
-        # tk.Button(self, text="Go to page one",
-        #           command=lambda: master.switch_frame(PageOne)).pack()
-        # tk.Button(self, text="Go to page two",
-        #           command=lambda: master.switch_frame(PageTwo)).pack()
 
 
 class AddCourse(tk.Frame):
@@ -59,37 +91,43 @@ class AddCourse(tk.Frame):
 
         def add_course(full_name, email_id, contact_number, course_url, language):
             # Use a service account
-            doc_ref = db.collection(u'users_db').document(email_id)
-            doc_ref.set({
-                u'full_name': full_name,
-                u'email_id': email_id,
-                u'contact_number': contact_number,
-                # u'course_url': course_url,
-                u'language': language
-            })
+            res = False
+            try:
+                doc_ref = db.collection(u'users_db').document(email_id)
+                doc_ref.set({
+                    u'full_name': full_name,
+                    u'email_id': email_id,
+                    u'contact_number': contact_number,
+                    # u'course_url': course_url,
+                    u'language': language
+                })
 
-            def url_cleaner(course_url):
-                ignore_char = ['https', 'www', '.in', 'http', '.com', ':', '//']  # Replaced with Nothing
-                unwanted_char = ['/', '?', '.', '=', '-']  # Replaced with Single Space
-                clean_url = course_url
-                for char in ignore_char:
-                    clean_url = clean_url.replace(char, '')
-                for char in unwanted_char:
-                    clean_url = clean_url.replace(char, ' ')
-                return clean_url
+                def url_cleaner(course_url):
+                    ignore_char = ['https', 'www', '.in', 'http', '.com', ':', '//']  # Replaced with Nothing
+                    unwanted_char = ['/', '?', '.', '=', '-']  # Replaced with Single Space
+                    clean_url = course_url
+                    for char in ignore_char:
+                        clean_url = clean_url.replace(char, '')
+                    for char in unwanted_char:
+                        clean_url = clean_url.replace(char, ' ')
+                    return clean_url
 
-            clean_url = url_cleaner(course_url)
-            tags = clean_url.split(' ')
+                clean_url = url_cleaner(course_url)
+                tags = clean_url.split(' ')
 
-            doc_ref.collection(u'course_url').document(clean_url).set(
-                {u'course_url': course_url})  # updating in users_db
+                doc_ref.collection(u'course_url').document(clean_url).set(
+                    {u'course_url': course_url})  # updating in users_db
 
-            doc_ref = db.collection(u'urls_db').document(clean_url)
-            doc_ref.set({
-                u'course_url': course_url,
-                u'tags': tags
-            })
-            doc_ref.collection(u'students_email').document(email_id).set({u'email_id': email_id})
+                doc_ref = db.collection(u'urls_db').document(clean_url)
+                doc_ref.set({
+                    u'course_url': course_url,
+                    u'tags': tags
+                })
+                doc_ref.collection(u'students_email').document(email_id).set({u'email_id': email_id})
+                res = True
+            except:
+                res = False
+            return res
 
         root = self
 
@@ -129,16 +167,17 @@ class AddCourse(tk.Frame):
         def update(*args):
             global full_name, email_id, contact_number, course_url, language
             full_name, email_id, contact_number, course_url, language = e1.get(), e2.get(), e3.get(), e4.get(), change_dropdown()
-            add_course(full_name, email_id, contact_number, course_url, language)
+            res = add_course(full_name, email_id, contact_number, course_url, language)
+            if res:
+                popupmsg('Successffully Submitted.')
+            else:
+                popupmsg('All details are mandatory. Try Again!')
 
         button = tk.Button(root, text='Submit', width=25, command=update)
         button.grid(row=7, column=1)
 
         button = tk.Button(root, text='Back to Main Menu', width=25, command=lambda: master.switch_frame(HomePage))
         button.grid(row=8, column=1)
-        # tk.Label(self, text="Page one", font=('Helvetica', 18, "bold")).pack(side="top", fill="x", pady=5)
-        # tk.Button(self, text="Go back to start page",
-        #           command=lambda: master.switch_frame(StartPage)).pack()
 
 
 class SearchLearners(tk.Frame):
@@ -205,14 +244,14 @@ class SearchLearners(tk.Frame):
         def update(*args):
             global course_url, language, learners_details
             learners_details = list()
-            print('clicked')
+            # print('clicked')
             course_url, language = e1.get(), change_dropdown()
             find_learners(course_url, language)
             results = 'Full Name\t\tContact Number\t\tEmail ID\t\tLanguage'
             for learner in learners_details:
                 results = results + '\n' + learner['full_name'] + '\t' + learner['contact_number'] + '\t' + learner[
                     'email_id'] + '\t' + learner['language']
-            print(results)
+            # print(results)
             tk.Label(root, text=results).grid(row=5)
 
         button = tk.Button(root, text='Find Learners', width=25, command=update)
@@ -224,9 +263,6 @@ class SearchLearners(tk.Frame):
 
         button = tk.Button(root, text='Back to Main Menu', width=25, command=lambda: master.switch_frame(HomePage))
         button.grid(row=6, column=1)
-        # tk.Label(self, text="Page two", font=('Helvetica', 18, "bold")).pack(side="top", fill="x", pady=5)
-        # tk.Button(self, text="Go back to start page",
-        #           command=lambda: master.switch_frame(StartPage)).pack()
 
 
 class SearchCourse(tk.Frame):
@@ -246,12 +282,12 @@ class SearchCourse(tk.Frame):
 
         def find_courses(tags_list):
             course_urls = list()
-            print(tags_list)
+            # print(tags_list)
             docs = db.collection(u'urls_db').where(u'tags', u'array_contains_any', tags_list).stream()
 
             for doc in docs:
                 course_urls.append(db.collection(u'urls_db').document(doc.id).get().to_dict()['course_url'])
-            print(course_urls)
+            # print(course_urls)
             return course_urls
 
         root = self
@@ -282,4 +318,5 @@ class SearchCourse(tk.Frame):
 
 if __name__ == "__main__":
     app = SampleApp()
+    center(app)
     app.mainloop()
