@@ -231,7 +231,7 @@ class SearchLearners(tk.Frame):
             return tkvar.get()
 
         def update(*args):
-            global course_url, language, learners_details
+            global course_url, language, learners_details, clicked_url
             learners_details = list()
             # print('clicked')
             course_url, language = e1.get(), change_dropdown()
@@ -251,6 +251,7 @@ class SearchLearners(tk.Frame):
                 tk.Label(root, text=learner['contact_number'], bg='#90CAF9', fg='#1A237E').grid(row=6+idx, column=1, padx=5, pady=5)
                 tk.Label(root, text=learner['email_id'], bg='#90CAF9', fg='#1A237E').grid(row=6+idx, column=2, padx=5, pady=5)
                 tk.Label(root, text=learner['language'], bg='#90CAF9', fg='#1A237E').grid(row=6+idx, column=3, padx=5, pady=5)
+            clicked_url = ''
 
         tk.Label(root, text='Course URL', font=LARGE_FONT, bg='#90CAF9',  padx=25, pady=10).grid(row=0)
         v = tk.StringVar(root, value=clicked_url)
