@@ -230,44 +230,27 @@ class SearchLearners(tk.Frame):
         def change_dropdown(*args):
             return tkvar.get()
 
-        label_list = [['']*4]*10
-
         def update(*args):
             global course_url, language, learners_details
-            for label_row in label_list:
-                for label in label_row:
-                    if type('') is not type(label):
-                        label.destroy()
             learners_details = list()
             # print('clicked')
             course_url, language = e1.get(), change_dropdown()
             find_learners(course_url, language)
             results = ''
-            label_list[0][0] = tk.Label(root, text='Search Results')
-            label_list[0][0].grid(row=4, padx=10)
-            label_list[1][0] = tk.Label(root, text='Full Name', font=LARGE_FONT, bg='#90CAF9', fg='#263238')
-            label_list[1][0].grid(row=5, column=0, padx=5, pady=5)
-            label_list[1][1] = tk.Label(root, text='Contact Number', font=LARGE_FONT, bg='#90CAF9', fg='#263238')
-            label_list[1][1].grid(row=5, column=1, padx=5, pady=5)
-            label_list[1][2] = tk.Label(root, text='Email ID', font=LARGE_FONT, bg='#90CAF9', fg='#263238')
-            label_list[1][2].grid(row=5, column=2, padx=5, pady=5)
-            label_list[1][3] = tk.Label(root, text='Language', font=LARGE_FONT, bg='#90CAF9', fg='#263238')
-            label_list[1][3].grid(row=5, column=3, padx=5, pady=5)
+            tk.Label(root, text='Search Results').grid(row=4, padx=10)
+            tk.Label(root, text='Full Name', font=LARGE_FONT, bg='#90CAF9', fg='#263238').grid(row=5, column=0, padx=5, pady=5)
+            tk.Label(root, text='Contact Number', font=LARGE_FONT, bg='#90CAF9', fg='#263238').grid(row=5, column=1, padx=5, pady=5)
+            tk.Label(root, text='Email ID', font=LARGE_FONT, bg='#90CAF9', fg='#263238').grid(row=5, column=2, padx=5, pady=5)
+            tk.Label(root, text='Language', font=LARGE_FONT, bg='#90CAF9', fg='#263238').grid(row=5, column=3, padx=5, pady=5)
             for idx, learner in enumerate(learners_details):
-                if idx>7:
-                    break
                 # results = results + '\n' + learner['full_name'] + '\t' + learner['contact_number'] + '\t' + learner['email_id'] + '\t' + learner['language']
                 # print(results)
                 # tk.Label(root, text=learner['full_name'].ljust(10)  + '\t\t' + learner['contact_number'].ljust(10)  + '\t\t' + learner[
                 #     'email_id'].ljust(10) + '\t\t' + learner['language'].ljust(10) ).grid(row=6+idx, padx=5, pady=5)
-                label_list[2+idx][0] = tk.Label(root, text=learner['full_name'], bg='#90CAF9', fg='#1A237E')
-                label_list[2+idx][0].grid(row=6+idx, column=0, padx=5, pady=5)
-                label_list[2+idx][1] = tk.Label(root, text=learner['contact_number'], bg='#90CAF9', fg='#1A237E')
-                label_list[2+idx][1].grid(row=6+idx, column=1, padx=5, pady=5)
-                label_list[2+idx][2] = tk.Label(root, text=learner['email_id'], bg='#90CAF9', fg='#1A237E')
-                label_list[2+idx][2].grid(row=6+idx, column=2, padx=5, pady=5)
-                label_list[2+idx][3] = tk.Label(root, text=learner['language'], bg='#90CAF9', fg='#1A237E')
-                label_list[2+idx][3].grid(row=6+idx, column=3, padx=5, pady=5)
+                tk.Label(root, text=learner['full_name'], bg='#90CAF9', fg='#1A237E').grid(row=6+idx, column=0, padx=5, pady=5)
+                tk.Label(root, text=learner['contact_number'], bg='#90CAF9', fg='#1A237E').grid(row=6+idx, column=1, padx=5, pady=5)
+                tk.Label(root, text=learner['email_id'], bg='#90CAF9', fg='#1A237E').grid(row=6+idx, column=2, padx=5, pady=5)
+                tk.Label(root, text=learner['language'], bg='#90CAF9', fg='#1A237E').grid(row=6+idx, column=3, padx=5, pady=5)
 
         tk.Label(root, text='Course URL', font=LARGE_FONT, bg='#90CAF9',  padx=25, pady=10).grid(row=0)
         v = tk.StringVar(root, value=clicked_url)
@@ -293,6 +276,9 @@ class SearchLearners(tk.Frame):
 
         button = tk.Button(root, text='Find Learners', font=("Arial", 20), width=15, command=update)
         button.grid(row=2, column=1, padx=30, pady=10)
+
+        button = tk.Button(root, text='Refresh', width=10, command=lambda: master.switch_frame(SearchLearners))
+        button.grid(row=2, column=0, padx=30, pady=10)
 
         button = tk.Button(root, text='Back to Main Menu', width=15, command=lambda: master.switch_frame(HomePage))
         button.grid(row=3, column=1, padx=30, pady=10)
